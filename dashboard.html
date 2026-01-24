@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Global Payment Intelligence System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --primary:#0a2540;
+  --accent:#00d4ff;
+  --success:#28a745;
+  --warning:#ffc107;
+  --danger:#dc3545;
+  --bg:#eef2f7;
+  --card:#ffffff;
+}
+
+body{
+  margin:0;
+  font-family:'Inter',Arial,sans-serif;
+  background:linear-gradient(120deg,#eef2f7,#f8fbff);
+  color:#333;
+}
+
+/* HEADER */
+header{
+  background:linear-gradient(135deg,#0a2540,#103b6f);
+  color:#fff;
+  padding:18px 26px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 8px 25px rgba(0,0,0,.25);
+}
+
+header h1{margin:0;font-size:22px}
+header small{opacity:.85}
+
+/* TABS */
+.tabs button{
+  background:none;
+  border:none;
+  color:#dbeafe;
+  margin-left:14px;
+  cursor:pointer;
+  position:relative;
+  padding-bottom:6px;
+  font-weight:600;
+}
+.tabs button:hover{color:#fff}
+
+.tabs button::after{
+  content:'';
+  position:absolute;
+  left:0;
+  bottom:0;
+  width:0;
+  height:2px;
+  background:var(--accent);
+  transition:.3s;
+}
+.tabs button.active::after{width:100%}
+
+/* LAYOUT */
+.container{padding:26px}
+.hidden{display:none}
+
+.box{
+  background:var(--card);
+  padding:22px;
+  border-radius:14px;
+  box-shadow:0 12px 30px rgba(0,0,0,.12);
+  margin-bottom:22px;
+}
+
+/* KPI */
+.kpi-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:18px;
+}
+
+.kpi-card{
+  transition:.25s;
+}
+.kpi-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 18px 40px rgba(0,0,0,.18);
+}
+
+.kpi-card h3{
+  font-size:13px;
+  color:#64748b;
+  margin:0;
+}
+.kpi-card p{
+  font-size:26px;
+  font-weight:700;
+  margin:10px 0 0;
+}
+
+/* COLORS */
+.success{color:var(--success)}
+.warning{color:var(--warning)}
+.danger{color:var(--danger)}
+
+/* GRID */
+.grid{
+  display:grid;
+  grid-template-columns:3fr 1.5fr;
+  gap:22px;
+}
+
+/* FLOW */
+.flow{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  flex-wrap:wrap;
+}
+.step{
+  padding:10px 16px;
+  border-radius:999px;
+  background:#f8fafc;
+  font-weight:600;
+  position:relative;
+  box-shadow:0 6px 14px rgba(0,0,0,.1);
+}
+.step::after{
+  content:"➜";
+  margin-left:12px;
+  color:#94a3b8;
+}
+.step:last-child::after{display:none}
+.step.success{background:#dcfce7;color:#166534}
+.step.pending{background:#fef9c3;color:#854d0e;animation:pulse 1.5s infinite}
+.step.failed{background:#fee2e2;color:#7f1d1d}
+
+@keyframes pulse{
+  0%{opacity:1}
+  50%{opacity:.5}
+  100%{opacity:1}
+}
+
+/* ALERTS */
+.alert{
+  padding:14px;
+  border-radius:10px;
+  margin-bottom:12px;
+  font-size:13px;
+  box-shadow:0 6px 14px rgba(0,0,0,.1);
+}
+.alert.success{background:#dcfce7}
+.alert.warning{background:#fef9c3}
+.alert.danger{background:#fee2e2}
+
+/* AUTO SCROLL ALERTS */
+.alert-box{
+  height:200px;
+  overflow:hidden;
+  position:relative;
+}
+.alert-scroll{
+  animation:scrollAlerts 14s linear infinite;
+}
+.alert-box:hover .alert-scroll{
+  animation-play-state:paused;
+}
+@keyframes scrollAlerts{
+  from{transform:translateY(0)}
+  to{transform:translateY(-50%)}
+}
+
+/* TABLES */
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+}
+th,td{
+  padding:12px;
+  border-bottom:1px solid #e5e7eb;
+}
+th{
+  background:#f1f5f9;
+}
+tr:hover{background:#f8fafc}
+
+.tag{
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:700;
+}
+.tag.success{background:#dcfce7}
+.tag.pending{background:#fef9c3}
+.tag.failed{background:#fee2e2}
+
+/* INPUTS */
+input{
+  padding:10px;
+  border-radius:10px;
+  border:1px solid #cbd5e1;
+  width:60%;
+}
+button{
+  padding:10px 14px;
+  border-radius:10px;
+  border:none;
+  background:var(--primary);
+  color:#fff;
+  cursor:pointer;
+  font-weight:600;
+}
+button:hover{
+  background:var(--accent);
+  color:#000;
+}
+
+canvas{width:100%!important;height:280px!important}
+
+footer{
+  text-align:center;
+  font-size:12px;
+  color:#777;
+  margin:30px 0;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Global Payment Intelligence</h1>
+    <small>Unified Transaction Observability Platform</small>
+  </div>
+  <div class="tabs">
+    <button class="active" onclick="showTab(event,'w1')">Dashboard</button>
+    <button onclick="showTab(event,'w2')">Transaction Debug</button>
+    <button onclick="showTab(event,'w3')">Reconciliation</button>
+    <button onclick="showTab(event,'w4')">Analytics</button>
+    <button onclick="showTab(event,'w5')">Gateway SLA</button>
+    <button onclick="showTab(event,'w6')">Fraud Center</button>
+    <button onclick="showTab(event,'w7')">Disputes</button>
+    <button onclick="showTab(event,'w8')">System Health</button>
+  </div>
+</header>
+
+<!-- WINDOW 1 -->
+<div id="w1" class="container">
+  <div class="kpi-grid">
+    <div class="box kpi-card"><h3>Total Transactions</h3><p>124,560</p></div>
+    <div class="box kpi-card"><h3>Successful</h3><p class="success">118,230</p></div>
+    <div class="box kpi-card"><h3>Pending</h3><p class="warning">3,120</p></div>
+    <div class="box kpi-card"><h3>Failed</h3><p class="danger">3,210</p></div>
+    <div class="box kpi-card"><h3>Revenue at Risk</h3><p class="danger">$82,450</p></div>
+  </div>
+
+  <div class="grid">
+    <div class="box">
+      <h2>Real-Time Payment Flow</h2>
+      <div class="flow">
+        <div class="step success">User</div>
+        <div class="step success">API</div>
+        <div class="step pending">Gateway</div>
+        <div class="step failed">Bank</div>
+        <div class="step pending">Settlement</div>
+      </div>
+    </div>
+
+    <div class="box">
+      <h2>Live Alerts</h2>
+      <div class="alert-box">
+        <div class="alert-scroll">
+          <div class="alert danger">🚨 128 payments stuck at bank</div>
+          <div class="alert warning">⚠ Retry spike on Gateway X</div>
+          <div class="alert danger">❌ SLA breach detected</div>
+          <div class="alert success">✔ Fraud activity normal</div>
+
+          <!-- duplicate for infinite scroll -->
+          <div class="alert danger">🚨 128 payments stuck at bank</div>
+          <div class="alert warning">⚠ Retry spike on Gateway X</div>
+          <div class="alert danger">❌ SLA breach detected</div>
+          <div class="alert success">✔ Fraud activity normal</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- WINDOW 2 -->
+<div id="w2" class="container hidden">
+<div class="box">
+<h2>Transaction Debug</h2>
+<input id="txnSearch" placeholder="Enter Transaction ID (e.g. TXN900001)">
+<button onclick="searchTxn()">Search</button>
+<div id="txnStatus" style="margin-top:12px;font-weight:bold"></div>
+<div id="txnTimeline" style="margin-top:16px"></div>
+</div>
+</div>
+
+<!-- WINDOW 3 -->
+<div id="w3" class="container hidden">
+<div class="box">
+<h2>Settlement Mismatch</h2>
+<table id="reconTable">
+<tr><th>Txn</th><th>Gateway</th><th>Bank</th><th>Diff</th><th>Status</th></tr>
+<!-- Rows dynamically inserted via JS -->
+</table>
+</div>
+</div>
+
+<!-- WINDOW 4 -->
+<div id="w4" class="container hidden">
+<div class="grid">
+<div class="box"><canvas id="revenueChart"></canvas></div>
+<div class="box"><canvas id="fraudChart"></canvas></div>
+</div>
+</div>
+
+<!-- WINDOW 5 -->
+<div id="w5" class="container hidden">
+<div class="box">
+<h2>Gateway SLA</h2>
+<table>
+<tr><th>Gateway</th><th>Success</th><th>Latency</th><th>Status</th></tr>
+<tr><td>Gateway X</td><td class="danger">89%</td><td>2.8s</td><td><span class="tag failed">BREACH</span></td></tr>
+<tr><td>Gateway Y</td><td class="success">97%</td><td>1.1s</td><td><span class="tag success">HEALTHY</span></td></tr>
+<tr><td>Gateway Z</td><td class="success">95%</td><td>1.5s</td><td><span class="tag success">HEALTHY</span></td></tr>
+</table>
+</div>
+</div>
+
+<!-- WINDOW 6 -->
+<div id="w6" class="container hidden">
+<div class="box">
+<h2>Fraud Center</h2>
+<div class="alert danger">Velocity abuse detected</div>
+<div class="alert warning">Proxy IP flagged</div>
+<div class="alert success">No high-risk transactions in last hour</div>
+</div>
+</div>
+
+<!-- WINDOW 7 -->
+<div id="w7" class="container hidden">
+<div class="box">
+<h2>Disputes</h2>
+<table>
+<tr><th>ID</th><th>Reason</th><th>Amount</th><th>Status</th></tr>
+<tr><td>DSP1282</td><td>Fraud</td><td>$120</td><td><span class="tag pending">Review</span></td></tr>
+<tr><td>DSP1301</td><td>No Show</td><td>$75</td><td><span class="tag success">Won</span></td></tr>
+<tr><td>DSP1305</td><td>Chargeback</td><td>$200</td><td><span class="tag pending">Review</span></td></tr>
+</table>
+</div>
+</div>
+
+<!-- WINDOW 8 -->
+<div id="w8" class="container hidden">
+<div class="box">
+<h2>System Health</h2>
+<div class="step success">API latency normal</div>
+<div class="step pending">Gateway degraded</div>
+<div class="step failed">Bank callback delayed</div>
+<div class="step success">Settlement engine operational</div>
+</div>
+</div>
+
+<footer>Global Payment Intelligence System • Unified View</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Tab switching
+function showTab(e,id){
+  document.querySelectorAll('.container').forEach(c=>c.classList.add('hidden'));
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.remove('hidden');
+  e.currentTarget.classList.add('active');
+  if(id==='w4' && !window.chartsLoaded){ initCharts(); window.chartsLoaded=true; }
+}
+
+// Sample transaction data (simulate DB)
+const txns = {};
+for(let i=1;i<=120;i++){
+  const id = 'TXN9'+(10000+i);
+  const statusArr = ['success','pending','failed'];
+  const steps = ['Payment Initiated','Gateway Accepted','Bank Processing','Settlement'];
+  txns[id] = {
+    final: statusArr[Math.floor(Math.random()*3)].toUpperCase(),
+    steps: steps.map(s => {
+      const stat = statusArr[Math.floor(Math.random()*3)];
+      return {name:s,status:stat};
+    })
+  };
+}
+
+// Transaction search
+function searchTxn() {
+    const id = document.getElementById('txnSearch').value.trim();
+    const statusEl = document.getElementById('txnStatus');
+    const timelineEl = document.getElementById('txnTimeline');
+
+    statusEl.innerHTML = '';
+    timelineEl.innerHTML = '';
+
+    fetch(`/transaction/${id}`)
+        .then(res => res.json())
+        .then(data => {
+            if(data.error){
+                statusEl.innerHTML = `<span class="danger">${data.error}</span>`;
+                return;
+            }
+            statusEl.innerHTML = `Final Status: <span class="${data.final_status==='SUCCESS'?'success':'danger'}">${data.final_status}</span>`;
+            data.steps.forEach(step => {
+                timelineEl.innerHTML += `<div class="step ${step.status}">${step.name}</div>`;
+            });
+        })
+        .catch(err => {
+            statusEl.innerHTML = `<span class="danger">Error fetching transaction</span>`;
+        });
+}
+
+
+// Populate Window 3
+const reconData = [];
+for(let i=1;i<=30;i++){
+  const txnId = 'TXN9'+(10000+i);
+  const gatewayAmt = Math.floor(Math.random()*200)+10;
+  const bankAmt = Math.random()>0.3 ? gatewayAmt : Math.floor(Math.random()*gatewayAmt);
+  const diff = gatewayAmt-bankAmt;
+  reconData.push({txn:txnId,gateway:gatewayAmt,bank:bankAmt,diff:diff,status:diff===0?'MATCHED':'PENDING'});
+}
+const reconTable = document.getElementById('reconTable');
+reconData.forEach(r=>{
+  const row = `<tr>
+    <td>${r.txn}</td>
+    <td>$${r.gateway}</td>
+    <td>$${r.bank}</td>
+    <td class="${r.status==='PENDING'?'danger':'success'}">${r.diff===0?'$0':'$'+r.diff}</td>
+    <td><span class="tag ${r.status==='MATCHED'?'success':'pending'}">${r.status}</span></td>
+  </tr>`;
+  reconTable.innerHTML += row;
+});
+
+// Charts
+function initCharts(){
+  new Chart(document.getElementById('revenueChart'),{
+    type:'line',
+    data:{labels:['Mon','Tue','Wed','Thu','Fri'],datasets:[{data:[12000,15000,14000,18000,22000],borderColor:'#0a2540',fill:false}]},
+    options:{responsive:true}
+  });
+  new Chart(document.getElementById('fraudChart'),{
+    type:'doughnut',
+    data:{labels:['Clean','Risk','Fraud'],datasets:[{data:[82,11,7],backgroundColor:['#28a745','#ffc107','#dc3545']}]},
+    options:{responsive:true}
+  });
+}
+</script>
+
+</body>
+</html>
